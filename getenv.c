@@ -12,22 +12,21 @@ char *_getenv(const char *name)
 {
 	int i;
 	int j = 0;
-	int equal = 0;
 	char *value = NULL;
 
 	while (environ[j])
 	{
 		i = 0;
 
-		while (environ[j][i] != '=')
+		while (name[i])
 		{
-			if (environ[j][i] == name[i])
-				i++;
-			else
+			if (environ[j][i] != name[i])
 				break;
+
+			i++;
 		}
 
-		if (environ[j][i] == '=')
+		if (environ[j][i] == '=' && name[i] == 0)
 		{
 			value = &(environ[j][i + 1]);
 			break;
