@@ -24,7 +24,6 @@ char **split(char *str)
 	}
 
 	cur_word = strtok(str, " ");
-
 	while (cur_word)
 	{
 		spl[i] = cur_word;
