@@ -3,8 +3,47 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 extern char **environ;
+
+/**
+ * _strlen - Gets the length of a string
+ * @s: The string to evaluate
+ *
+ * Return: s' length
+ */
+int _strlen(char *s)
+{
+	char *i;
+	int count = 0;
+
+	for (i = s; *i > 0; i++)
+		count++;
+
+	return (count);
+}
+
+/**
+ * _strcpy - Copies a string to a buffer
+ * @dest: The buffer where to copy the string to
+ * @src: The string to copy
+ *
+ * Return: The pointer to dest
+ */
+char *_strcpy(char *dest, char *src)
+{
+	int i;
+
+	for (i = 0; src[i]; i++)
+	{
+		dest[i] = src[i];
+	}
+
+	dest[i] = 0;
+
+	return (dest);
+}
 
 /**
  * _strcat - Concatenates two strings
@@ -71,37 +110,82 @@ char *_getenv(const char *name)
 }
 
 /**
- * checkpath - Checks for files in the PATH
+ * alloc_concat - Concatenates two strings, allocating memory for them
+ * @dest: Destination string
+ * @tocat: String to concatenate to dest
+ *
+ * Return: A pointer to the new string, or NULL if fail
+ */
+char *alloc_concat(char *dest, char *tocat)
+{
+	int len1;
+	int len2;
+	char *s;
+
+	len1 = _strlen(dest);
+	len2 = _strlen(tocat);
+
+	s = malloc(len1 + len2 + 1);
+	if (s == NULL)
+		return (NULL);
+
+	s = _strcpy(s, dest);
+	s = _strcat(s, tocat);
+
+	return (s);
+}
+
+/**
+ * checkpath - Search for files in the PATH
  * @filename: The name of the file to search
  *
- * Return: 0 if file exists in PATH, or NULL if fail
+ * Return: A pointer to the alloc'd full path of the file, or NULL if fail
  */
-int checkpath(char *filename)
+char *checkpath(char *filename)
 {
 	char *path = _getenv("PATH");
-	char *cur_word = NULL;
-	char *folder;
+	char *cur_folder = NULL;
+	char *folder_sep = "/";
+	char *slash_filename;
 	char *filepath;
+	int fn_length = _strlen(filename);
 	struct stat st;
 
-	cur_word = strtok(path, ":");
+	slash_filename = alloc_concat(folder_sep, filename);
+	if (slash_filename == NULL)
+		return (NULL);
 
-	while (cur_word)
+	cur_folder = strtok(path, ":");
+
+	while (cur_folder)
 	{
-		folder = cur_word;
-		filepath = _strcat(folder, filename);
+		filepath = alloc_concat(cur_folder, slash_filename);
+		if (filepath == NULL)
+			return (NULL);
 
 		if (stat(filepath, &st) != 0)
 		{
-			
+			free(filepath);
+			cur_folder = strtok(NULL, ":");
 		}
-
+		else
+		{
+			free(slash_filename);
+			return (filepath);
+		}
 	}
 
-	return (0);
+	free(slash_filename);
+	free(filepath);
+	return (NULL);
 }
 
 int main(void)
 {
-	checkpath("test");
+	char *s = checkpath("ls");
+
+	printf("%s", s);
+	free(s);
+
+	return (0);
 }
