@@ -82,7 +82,6 @@ char *_getenv(const char *name)
 {
 	int i;
 	int j = 0;
-	int equal = 0;
 	char *value = NULL;
 
 	while (environ[j])
@@ -148,7 +147,6 @@ char *checkpath(char *filename)
 	char *folder_sep = "/";
 	char *slash_filename;
 	char *filepath;
-	int fn_length = _strlen(filename);
 	struct stat st;
 
 	slash_filename = alloc_concat(folder_sep, filename);
@@ -181,7 +179,7 @@ char *checkpath(char *filename)
 
 int main(void)
 {
-	char *s = checkpath("bety");
+	char *s = checkpath("ls");
 
 	printf("%s", s);
 	free(s);
