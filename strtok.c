@@ -3,36 +3,6 @@
 #include <stdlib.h>
 
 /**
- * _strdup - Duplicates a string
- * @str: The string to duplicate
- *
- * Description: Space for the new string is obtained with malloc, must be freed
- * Return: A pointer to the new string, or NULL if fail
- */
-char *_strdup(char *str)
-{
-	int length = 0;
-	int i;
-	char *s;
-
-	if (str == NULL)
-		return (NULL);
-
-	while (str[length])
-		length++;
-
-	s = malloc(sizeof(char) * (length + 1));
-
-	if (s == NULL)
-		return (NULL);
-
-	for (i = 0; i < length; i++)
-		s[i] = str[i];
-
-	return (s);
-}
-
-/**
  * split - Splits a string and stores each word in an array
  * @str: The string
  *
@@ -41,43 +11,28 @@ char *_strdup(char *str)
 char **split(char *str)
 {
 	int i = 0;
-	int words = 0;
+	int buf = 1024;
 	char **spl;
-	char *temp_str = NULL;
-	char *cur_word = NULL;
+	char *cur_word;
 
-	if (str == NULL)
-		return (NULL);
-
-	temp_str = _strdup(str);
-
-	if (temp_str == NULL)
-		return (NULL);
-
-	cur_word = strtok(temp_str, " ");
-
-	while (cur_word)
-	{
-		words++;
-		cur_word = strtok(NULL, " ");
-	}
-
-	spl = malloc(sizeof(char) * words);
+	spl = malloc(sizeof(char) * buf);
 
 	if (spl == NULL)
+	{
+		perror("Error: can't allocate memory");
 		return (NULL);
+	}
 
 	cur_word = strtok(str, " ");
-	i = 0;
 
 	while (cur_word)
 	{
-		spl[i] = _strdup(cur_word);
-		cur_word = strtok(NULL, " ");
+		spl[i] = cur_word;
 		i++;
+		cur_word = strtok(NULL, " ");
 	}
+	spl[i] = NULL;
 
-	free(temp_str);
 	return (spl);
 }
 
@@ -95,8 +50,6 @@ int main(void)
 
 	printf("%s", arr[0]);
 
-	while (arr[i])
-		free(arr[i++]);
 	free(arr);
 
 	return (0);
