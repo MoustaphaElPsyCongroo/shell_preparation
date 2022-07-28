@@ -176,13 +176,12 @@ char *checkpath(char *filename)
 	}
 
 	free(slash_filename);
-	free(filepath);
 	return (NULL);
 }
 
 int main(void)
 {
-	char *s = checkpath("ls");
+	char *s = checkpath("bety");
 
 	printf("%s", s);
 	free(s);
